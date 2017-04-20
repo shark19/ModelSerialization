@@ -154,7 +154,6 @@ namespace ModelSerialization {
 		}
 		System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 			rotate(Convert::ToInt16(this->textBox1->Text));
-			reDraw();
 		}
 
 		void rotate(int degree) {
@@ -172,6 +171,7 @@ namespace ModelSerialization {
 				points1->Add(PointF(matrix[0] * x + matrix[1] * y + d, matrix[2] * x + matrix[3] * y + d));
 			}
 			points = points1;
+			reDraw();
 		}
 };
 }
