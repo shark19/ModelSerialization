@@ -170,48 +170,58 @@ namespace ModelSerialization {
 #pragma endregion
 	private: 
 		List<PointF> ^points;
-		
-		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-			start();
-		}
-		
-		void start() {
-			 StreamReader^ stream = File::OpenText("./Square.txt");
-			 String^ s = stream->ReadLine();
-			 if (!s) {
-				 return;
-			 }
-			 points = gcnew List<PointF>();
-			 int i = 0;
-			 for each(String^ string in s->Split(' ')) {
-				 points->Add(PointF(Convert::ToDouble(string->Substring(0, 3)), Convert::ToDouble(string->Substring(4))));
-				 i++;
-			 }
-			 reDraw();
+
+		void start(int button) {
+			switch (button)
+			{
+			case 1:
+				draw();
+				break;
+			case 2:
+				rotate();
+				break;
+			default:
+				break;
+			}
 		}
 
 		void reDraw() {
-			 pictureBox1->Refresh();
-			 Color color = Color::BlueViolet;
-			 Pen^ pen = gcnew Pen(color);
-			 Graphics^ g = this->pictureBox1->CreateGraphics();
-			 for (int i = 0; i < points->Count; i += 2) {
-				 g->DrawLine(pen, points[i], points[i + 1]);
-			 }
-			 String^ pString = gcnew String("");
-
-			 for each(PointF point in points) {
-				 pString = gcnew String(pString + point.X + "-" + point.Y + " ");
-			 }
-			 pString = pString->TrimEnd();
-			 this->richTextBox1->Text = pString;
-		}
-		System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
-			rotate(Convert::ToInt16(this->textBox1->Text));
+			pictureBox1->Refresh();
+			Color color = Color::BlueViolet;
+			Pen^ pen = gcnew Pen(color);
+			Graphics^ g = this->pictureBox1->CreateGraphics();
+			for (int i = 0; i < points->Count; i += 2) {
+				g->DrawLine(pen, points[i], points[i + 1]);
+			}
+			fillRTB();
 		}
 
-		void rotate(int degree) {
-			double radians = (double) degree / (double) 57.3;
+		void fillRTB() {
+			String^ pString = gcnew String("");
+			for each(PointF point in points) {
+				pString = gcnew String(pString + point.X + "-" + point.Y + " ");
+			}
+			pString = pString->TrimEnd();
+			this->richTextBox1->Text = pString;
+		}
+
+		void draw() {
+			StreamReader^ stream = File::OpenText("./Square.txt");
+			String^ s = stream->ReadLine();
+			if (!s) {
+				return;
+			}
+			points = gcnew List<PointF>();
+			int i = 0;
+			for each(String^ string in s->Split(' ')) {
+				points->Add(PointF(Convert::ToDouble(string->Substring(0, 3)), Convert::ToDouble(string->Substring(4))));
+				i++;
+			}
+			reDraw();
+		}
+
+		void rotate() {
+			double radians = Convert::ToDouble(this->textBox1->Text) / (double) 57.3;
 			List<double>^ matrix = gcnew List<double>();
 			List<PointF>^ points1 = gcnew List<PointF>();
 			matrix->Add(Math::Cos(radians));
@@ -227,6 +237,14 @@ namespace ModelSerialization {
 			}
 			points = points1;
 			reDraw();
+		}
+		
+		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+			start(1);
+		}
+
+		System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
+			start(2);
 		}
 };
 }
