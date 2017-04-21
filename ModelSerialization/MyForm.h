@@ -171,18 +171,13 @@ namespace ModelSerialization {
 	private: 
 		List<PointF> ^points;
 
-		void start(int button) {
-			switch (button)
-			{
-			case 1:
-				draw();
-				break;
-			case 2:
-				rotate();
-				break;
-			default:
-				break;
+		void fillRTB() {
+			String^ pString = gcnew String("");
+			for each(PointF point in points) {
+				pString = gcnew String(pString + point.X + "-" + point.Y + " ");
 			}
+			pString = pString->TrimEnd();
+			this->richTextBox1->Text = pString;
 		}
 
 		void reDraw() {
@@ -194,15 +189,6 @@ namespace ModelSerialization {
 				g->DrawLine(pen, points[i], points[i + 1]);
 			}
 			fillRTB();
-		}
-
-		void fillRTB() {
-			String^ pString = gcnew String("");
-			for each(PointF point in points) {
-				pString = gcnew String(pString + point.X + "-" + point.Y + " ");
-			}
-			pString = pString->TrimEnd();
-			this->richTextBox1->Text = pString;
 		}
 
 		void draw() {
@@ -237,6 +223,20 @@ namespace ModelSerialization {
 			}
 			points = points1;
 			reDraw();
+		}
+
+		void start(int button) {
+			switch (button)
+			{
+			case 1:
+				draw();
+				break;
+			case 2:
+				rotate();
+				break;
+			default:
+				break;
+			}
 		}
 		
 		System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
