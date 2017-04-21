@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <string.h>
 
 namespace ModelSerialization {
 
@@ -44,6 +45,9 @@ namespace ModelSerialization {
 	private: System::Windows::Forms::TextBox^  textBox1;
 	private: System::Windows::Forms::TextBox^  textBox2;
 	private: System::Windows::Forms::Label^  label1;
+	private: System::Windows::Forms::TextBox^  textBox3;
+	private: System::Windows::Forms::RichTextBox^  richTextBox1;
+
 	protected:
 
 	private:
@@ -65,12 +69,14 @@ namespace ModelSerialization {
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->label1 = (gcnew System::Windows::Forms::Label());
+			this->textBox3 = (gcnew System::Windows::Forms::TextBox());
+			this->richTextBox1 = (gcnew System::Windows::Forms::RichTextBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(200, 400);
+			this->button1->Location = System::Drawing::Point(257, 400);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(103, 63);
 			this->button1->TabIndex = 0;
@@ -80,7 +86,7 @@ namespace ModelSerialization {
 			// 
 			// pictureBox1
 			// 
-			this->pictureBox1->Location = System::Drawing::Point(200, 61);
+			this->pictureBox1->Location = System::Drawing::Point(348, 26);
 			this->pictureBox1->Name = L"pictureBox1";
 			this->pictureBox1->Size = System::Drawing::Size(398, 324);
 			this->pictureBox1->TabIndex = 1;
@@ -88,7 +94,7 @@ namespace ModelSerialization {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(475, 400);
+			this->button2->Location = System::Drawing::Point(538, 400);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(75, 63);
 			this->button2->TabIndex = 2;
@@ -98,34 +104,52 @@ namespace ModelSerialization {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(576, 418);
+			this->textBox1->Location = System::Drawing::Point(633, 437);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(113, 26);
 			this->textBox1->TabIndex = 3;
-			this->textBox1->Text = Convert::ToString(15);
+			this->textBox1->Text = L"15";
 			// 
 			// textBox2
 			// 
-			this->textBox2->Location = System::Drawing::Point(341, 437);
+			this->textBox2->Location = System::Drawing::Point(384, 437);
 			this->textBox2->Name = L"textBox2";
-			this->textBox2->Size = System::Drawing::Size(100, 26);
+			this->textBox2->Size = System::Drawing::Size(47, 26);
 			this->textBox2->TabIndex = 4;
-			this->textBox2->Text = Convert::ToString(100);
+			this->textBox2->Text = L"100";
 			// 
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(364, 414);
+			this->label1->Location = System::Drawing::Point(430, 400);
 			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(51, 20);
+			this->label1->Size = System::Drawing::Size(43, 20);
 			this->label1->TabIndex = 5;
 			this->label1->Text = L"Pivot";
+			// 
+			// textBox3
+			// 
+			this->textBox3->Location = System::Drawing::Point(466, 437);
+			this->textBox3->Name = L"textBox3";
+			this->textBox3->Size = System::Drawing::Size(47, 26);
+			this->textBox3->TabIndex = 6;
+			this->textBox3->Text = L"100";
+			// 
+			// richTextBox1
+			// 
+			this->richTextBox1->Location = System::Drawing::Point(13, 13);
+			this->richTextBox1->Name = L"richTextBox1";
+			this->richTextBox1->Size = System::Drawing::Size(172, 519);
+			this->richTextBox1->TabIndex = 7;
+			this->richTextBox1->Text = L"";
 			// 
 			// MyForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(9, 20);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(778, 544);
+			this->Controls->Add(this->richTextBox1);
+			this->Controls->Add(this->textBox3);
 			this->Controls->Add(this->label1);
 			this->Controls->Add(this->textBox2);
 			this->Controls->Add(this->textBox1);
@@ -174,6 +198,13 @@ namespace ModelSerialization {
 			 for (int i = 0; i < points->Count; i += 2) {
 				 g->DrawLine(pen, points[i], points[i + 1]);
 			 }
+			 String^ pString = gcnew String("");
+
+			 for each(PointF point in points) {
+				 pString = gcnew String(pString + point.X + "-" + point.Y + " ");
+			 }
+			 pString = pString->TrimEnd();
+			 this->richTextBox1->Text = pString;
 		}
 		System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 			rotate(Convert::ToInt16(this->textBox1->Text));
@@ -187,11 +218,12 @@ namespace ModelSerialization {
 			matrix->Add(-Math::Sin(radians));
 			matrix->Add(Math::Sin(radians));
 			matrix->Add(Math::Cos(radians));
-			int d = Convert::ToInt16(textBox2->Text);
+			int pivotX = Convert::ToInt16(textBox2->Text);
+			int pivotY = Convert::ToInt16(textBox2->Text);
 			for each(PointF point in points) {
-				double x = (double)point.X - d;
-				double y = (double)point.Y - d;
-				points1->Add(PointF(matrix[0] * x + matrix[1] * y + d, matrix[2] * x + matrix[3] * y + d));
+				double x = (double)point.X - pivotX;
+				double y = (double)point.Y - pivotY;
+				points1->Add(PointF(matrix[0] * x + matrix[1] * y + pivotX, matrix[2] * x + matrix[3] * y + pivotY));
 			}
 			points = points1;
 			reDraw();
